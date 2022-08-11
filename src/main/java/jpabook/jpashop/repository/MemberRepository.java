@@ -16,6 +16,7 @@ public class MemberRepository {
 
     public Long save(Member member) {
         em.persist(member);//여기서 JPA가 얘를 저장함.
+        //persist하여 영속성컨텍스트에 갔을 때도 PK를 key로 사용하여 올림. ( 아직 DB는 가지도 않음 )
         return member.getId();
     }
 
@@ -24,7 +25,7 @@ public class MemberRepository {
         return em.find(Member.class, id);
     }
     //*********************************************************************************
-    //1. persist하면 영속성컨텍스트에 일단 member엔티티를 넣고 나중에 트랜젝션이 commit되는 시점에
+    //1. persist하면 영속성컨텍스트에 일단 member엔티티를 올리고 나중에 트랜젝션이 commit되는 시점에
     //   DB에 반영 (INSERT 쿼리가 날라감)
     //2. find메서드는 (단건조회) 는 (찾을타입, PK) 넣어주면 됨.
     //*********************************************************************************
