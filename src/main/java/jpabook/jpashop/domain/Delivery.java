@@ -17,7 +17,7 @@ public class Delivery {
     @Column(name = "delivery_id")
     private Long id;
 
-    @OneToOne//delivery: order = 1:1
+    @OneToOne(fetch = FetchType.LAZY)//delivery: order = 1:1
     private Order order;
 
     @Embedded//내장타입이기 때문에

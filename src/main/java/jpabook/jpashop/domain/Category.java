@@ -29,7 +29,7 @@ public class Category {
     private List<Item> items = new ArrayList<>();
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;//Category는 계층구조이므로 부모, 자식 알아야함.
 
@@ -38,4 +38,12 @@ public class Category {
     private List<Category> child = new ArrayList<>();
 
         //같은 엔티티에 대해서 셀프로 양방향연관관계 걸음.
+
+    /**
+     * 연관관계 편의메서드
+     */
+    public void ddCHildCategory(Category child) {
+        this.child.add(child);
+        child.setParent(this);
+    }
 }
