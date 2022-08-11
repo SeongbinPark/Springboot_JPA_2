@@ -1,6 +1,6 @@
 package jpabook.jpashop;
 
-import org.assertj.core.api.Assertions;
+import jpabook.jpashop.domain.Member;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.*;
 
 
 //Junit4
@@ -21,7 +20,7 @@ public class MemberRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(false)
+    @Rollback(false)//커밋해준다.
     public void testMember() throws Exception {
         //given
         Member member = new Member();
@@ -32,9 +31,11 @@ public class MemberRepositoryTest {
         Member findMember = memberRepository.find(savedId);
 
         //then
-        assertThat(findMember.getId()).isEqualTo(member.getId());
-        assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
-        assertThat(findMember).isEqualTo(member);//True
+        assertThat(findMember.getId()).isEqualTo(member.getId());//저장한멤버vs조회한멤버
+        assertThat(findMember.getUsername()).isEqualTo(member.getUsername());//저장한멤버vs조회한멤버
+        assertThat(findMember).isSameAs(member);//True
         //findmember == member
     }
+
+
 }
