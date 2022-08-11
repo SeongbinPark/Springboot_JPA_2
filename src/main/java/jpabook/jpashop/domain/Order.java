@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orders")//테이블
 @Setter
 @Getter
-public class Order {
+public class Order{
 
     @Id
     @GeneratedValue
