@@ -24,7 +24,7 @@ public class MemberService {
      */
     @Transactional// 만약 읽기가 아닌 쓰기에는 readOnly=true 붙이면 데이터 변경안됨....
     //이 떄 @Transactional 의 기본세팅은 readOnly=false . 클래스에 true여서 여기만 따로 붙여준다.
-    public long join(Member member) {
+    public Long join(Member member) {
         validateDuplicateMember(member);//중복 회원 검증 추가.
         memberRepository.save(member);
         return member.getId();
