@@ -80,7 +80,7 @@ public class Order {
      *///비지니스로직에 대한 체크로직이 엔티티내부에 있다.
     public void cancel() {
         if (delivery.getStatus() == DeliveryStatus.COMP) {
-            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.")
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
         }//이미 배송완료되면 캔슬불가
 
         this.setStatus(OrderStatus.CANCEL);

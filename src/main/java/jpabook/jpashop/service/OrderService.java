@@ -26,10 +26,10 @@ public class OrderService {
 
 
     /**
-     * 주문
+     * 주문 하기
      */
     @Transactional//주문은 데이터를 변경하는거기 때문에
-    //주문하려면 멤버, 아이템, 몇개 주문할건지 필요.
+    //주문하려면 멤버, 아이템, 몇개 주문할건지 필요.( 화면에 뜸 )
     public Long order(Long memberId, Long itemId, int count) {
 
         //엔티티조회 ( memberId로 넘어왔으므로 멤버조회
