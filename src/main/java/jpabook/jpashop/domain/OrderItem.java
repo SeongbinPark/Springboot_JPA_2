@@ -3,6 +3,7 @@ package jpabook.jpashop.domain;
 import jpabook.jpashop.domain.item.Item;
 import lombok.Getter;
 import lombok.Setter;
+import org.aspectj.weaver.ast.Or;
 
 import javax.persistence.*;
 
@@ -29,4 +30,33 @@ public class OrderItem {
 
     private int count;//주문 수량
 
+    /**
+     * 생성 메서드
+     */
+    public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setItem(item);
+        orderItem.setOrderPrice(orderPrice);
+        orderItem.setCount(count);
+
+        item.removeStock(count);//재고를 줄여줘야함.(넘어온 count 만큼)
+        return orderItem;
+    }
+
+
+    /**
+     * 비지니스 로직
+     */
+    //(주문취소한 여러개 상품 재고 증가)
+    public void cancel() {
+        getItem().addStock(count);
+    }
+
+    /**
+     * 조회 로직
+     */
+    //주문상품 전체 가격조회
+    public int getTotalPrice() {
+        return getOrderPrice() * getCount();
+    }
 }

@@ -3,6 +3,7 @@ package jpabook.jpashop.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.aspectj.weaver.ast.Or;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.util.List;
 @Table(name = "orders")//테이블
 @Setter
 @Getter
-public class Order{
+public class Order {
 
     @Id
     @GeneratedValue
@@ -32,11 +33,17 @@ public class Order{
     @Enumerated(EnumType.STRING)//enum이면 넣어줘야됨, STRING 써야 순서상관X
     private OrderStatus status;//주문상태 enum으로 할거임.
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
+
+
     /**
      * 연관관계 편의메서드
      */
     public void setMember(Member member) {
-        this.member=member;
+
+        this.member = member;
         member.getOrders().add(this);
     }
 
@@ -45,10 +52,49 @@ public class Order{
         orderItem.setOrder(this);
     }
 
-//    public void setDelivery(Delivery delivery) {
-//        this.delivery=delivery;
-//        delivery.setOrder(this);
-//
-//    }
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
+        delivery.setOrder(this);
+    }
 
+    /**
+     * 생성 메서드
+     *///밖에서 set하는게 아니라 생성 할때부터 주문생성에대한 로직을 완성시켜둠. 앞으로 주문생성관련은 여기를 거치면됨.
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);//ORDER상태로 강제
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    /**
+     * 주문 취소
+     *///비지니스로직에 대한 체크로직이 엔티티내부에 있다.
+    public void cancel() {
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.")
+        }//이미 배송완료되면 캔슬불가
+
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();//한번 주문 할 때 여러개 주문하면 각각에 캔슬날려줘야함.
+        }
+    }
+
+    /**
+     * 조회 로직
+     */
+    //전체 주문 가격 조회
+    public int getTotalPrice() {
+        int totalPrice= orderItems.stream()
+                .mapToInt(OrderItem::getTotalPrice)
+                .sum();
+        //상품 각각의 가격 더하기.
+        return totalPrice;
+    }
 }
