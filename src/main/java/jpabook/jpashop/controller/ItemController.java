@@ -49,7 +49,9 @@ public class ItemController {
         return "items/itemList";
     }
 
-    //상품수정
+
+
+    //상품update
     @GetMapping("items/{itemId}/edit")
     public String updateItemForm(@PathVariable("itemId") Long itemId, Model model) {//폼 먼저 호출, 그 뒤에 POST로 수정
         Book item = (Book) itemService.findOne(itemId);
@@ -68,19 +70,21 @@ public class ItemController {
     }
 
     @PostMapping("items/{itemId}/edit")//실제 값 변경
-    public String updateItem(@ModelAttribute("form") BookForm form) {//Pathvariable인 itemId를 안쓸거라 안받아도됨.
-                                //updateItemForm에서 POST로 BookForm 객체가넘어옴.(이름 : form)
-        Book book = new Book();
-        book.setId(form.getId());
-        book.setName(form.getName());
-        book.setPrice(form.getPrice());
-        book.setStockQuantity(form.getStockQuantity());
-        book.setAuthor(form.getAuthor());
-        book.setIsbn(form.getIsbn());
+    public String updateItem(@ModelAttribute BookForm form) {//Pathvariable인 itemId를 안쓸거라 안받아도됨.
+                                //updateItemForm.html에서 POST로 BookForm 객체가넘어옴.(이름 : form)
+//        Book book = new Book();
+//        book.setId(form.getId());
+//        book.setName(form.getName());
+//        book.setPrice(form.getPrice());
+//        book.setStockQuantity(form.getStockQuantity());
+//        book.setAuthor(form.getAuthor());
+//        book.setIsbn(form.getIsbn());
+//
+//        itemService.saveItem(book);//내가 new한 Book객체라서 persist해줘야함.
 
-        itemService.saveItem(book);
+        itemService.updateItem(form.getId(),form.getName(), form.getPrice(), form.getStockQuantity());
         return "redirect:/items";//상품목록으로 
     }
 }
-//7-4부터 깃 add 안함.
+
 
