@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"/>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <form th:action="@{/items/new}" th:object="${form}" method="post">
+        <!--object에 BookForm 객체가 들어간 상태. 밑에서 *{필드명}으로 BookForm의 필드를 꺼내 쓴다.( model에 객체를 넘겼을 때 장점.-->
+
+        <!--12. 아까 컨트롤러에서 Model로 매핑된 BookForm 객체가 object에 들어간다.-->
+        <!--15. *{name} 에서 *은 연결된 object를 참조한다. ( BookForm의 name필드 ) (getter, setter로 접근)-->
+        <!--36. 버튼 submit 누르면 12. /items/new에 post요청으로 넘어간다. ( BookForm 객체도 넘어간다. )-->
+        <!-- -> Post 컨트롤러를 만들자.-->
+        <div class="form-group">
+            <label th:for="name">상품명</label>
+            <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label th:for="price">가격</label>
+            <input type="number" th:field="*{price}" class="form-control" placeholder="가격을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label th:for="stockQuantity">수량</label>
+            <input type="number" th:field="*{stockQuantity}" class="form-control" placeholder="수량을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label th:for="author">저자</label>
+            <input type="text" th:field="*{author}" class="form-control" placeholder="저자를 입력하세요">
+        </div>
+        <div class="form-group">
+            <label th:for="isbn">ISBN</label>
+            <input type="text" th:field="*{isbn}" class="form-control" placeholder="ISBN을 입력하세요">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <!--버튼 "submit"을 누르면 bookform 객체가 post로 날아감. /items/new -> 아이템컨트롤러의 post로-->
+    </form>
+    <br/>
+    <div th:replace="fragments/footer :: footer"/>
+
+</div> <!-- /container -->

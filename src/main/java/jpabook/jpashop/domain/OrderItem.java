@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)//막아둠.->생성메서드만 써라.
 public class OrderItem {
 
     @Id
@@ -54,7 +54,7 @@ public class OrderItem {
      */
     //(주문취소한 여러개 상품 재고 증가)
     public void cancel() {
-        getItem().addStock(count);
+        this.item.addStock(count);
     }
 
     /**
@@ -62,6 +62,6 @@ public class OrderItem {
      */
     //주문상품 전체 가격조회
     public int getTotalPrice() {
-        return getOrderPrice() * getCount();
+        return this.getOrderPrice() * this.getCount();
     }
 }

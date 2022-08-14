@@ -42,22 +42,24 @@ public class Order {
 
 
     /**
-     * 연관관계 편의메서드
+     * 연관관계 편의메서드 ( 양쪽 다 값 세팅한다 생각하자 )
      */
     public void setMember(Member member) {
 
         this.member = member;
         member.getOrders().add(this);
+        //this(order)의 필드에 멤버를 추가하고 그 order를 Member의 필드인 List<Order>에 추가한다.
     }
 
     public void addOrderItem(OrderItem orderItem) {
-        orderItems.add(orderItem);
+        this.orderItems.add(orderItem);
         orderItem.setOrder(this);
     }
 
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
         delivery.setOrder(this);
+        //onetoone 이므로 서로가 서로를 등록.
     }
 
     /**
@@ -79,9 +81,9 @@ public class Order {
      * 주문 취소
      *///비지니스로직에 대한 체크로직이 엔티티내부에 있다.
     public void cancel() {
-        if (delivery.getStatus() == DeliveryStatus.COMP) {
+        if (delivery.getStatus() == DeliveryStatus.COMP) {//이미 배송완료되면 캔슬불가
             throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
-        }//이미 배송완료되면 캔슬불가
+        }
 
         this.setStatus(OrderStatus.CANCEL);
         for (OrderItem orderItem : orderItems) {

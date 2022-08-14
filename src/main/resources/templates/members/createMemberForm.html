@@ -10,6 +10,12 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <form role="form" action="/members/new" th:object="${memberForm}" method="post">
+        <!--object에 memberForm 객체가 들어간 상태. 밑에서 *{필드명}으로 memberForm의 필드를 꺼내 쓴다.( model에 객체를 넘겼을 때 장점.-->
+
+        <!--12. 아까 컨트롤러에서 Model로 매핑된 MemberForm 객체가 object에 들어간다.-->
+        <!--15. *{name} 에서 *은 연결된 object를 참조한다. ( MemberForm의 name필드 ) (getter, setter로 접근)-->
+        <!--36. 버튼 submit 누르면 12. /members/new에 post요청으로 넘어간다. ( MemberForm 객체도 넘어간다. )-->
+        <!-- -> Post 컨트롤러를 만들자.-->
         <div class="form-group">
             <label th:for="name">이름</label>
             <input type="text" th:field="*{name}" class="form-control"

@@ -12,10 +12,10 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)//일단 true로 깔아둠. 값 변경로직 시 false로 각각 설정
-@RequiredArgsConstructor
+@RequiredArgsConstructor//final 붙은 필드로만 생성자를 만들어준다.
 public class ItemService {
 
-    private ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
     @Transactional//readOnly false로 하기 위해 ( 어노테이션 가까운게 우선권 ( 오버라이드))
     public void saveItem(Item item) {

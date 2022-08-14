@@ -57,7 +57,7 @@ public class OrderService {
 
         /**
          * 여기서 왜 order만 save(em.persist) 했냐.. 원래는 delivery, orderItem도 jpa에 넣어줘야(persist) 하는데
-         * Cascade 옵션 때문에 : Order를 persist 하면 orderItem에도 강제로 persist 날려준다.
+         .* Cascade 옵션 때문에 : Order를 persist 하면 orderItem에도 강제로 persist 날려준다
          * Delivery도 cascade옵션이라 따로 persist 안해줘도 된다.
          *
          * cascade 범위에 대한 고민 : order -> orderitem, order-> delivery 정도에서는 사용좋음.
@@ -71,7 +71,7 @@ public class OrderService {
     /**
      * 주문 취소
      */
-    @Transactional
+    @Transactional//주문취소는 데이터를 변경하는거기 때문에
     public void cancelOrder(Long orderId) {//취소버튼 누르면 orderId만 넘어옴
 
         //주문 엔티티 조회
@@ -80,7 +80,6 @@ public class OrderService {
         //주문 취소
         order.cancel();//Order엔티티 속에 있는 비지니스 로직.
 
-        //
     }
 
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class MemberController {
 
     //create에서 왜 Member(엔티티)로 안받고 MemberForm으로 받나? -> 차이가 크다.
     @PostMapping("/members/new")//실제 데이터를 등록한다.
-    public String create(@Valid MemberForm form, BindingResult result) {
+    public String create(@Valid MemberForm form, BindingResult result) {//html의 MemberForm이 그대로 넘어옴.
         //만약 form에 오류가 있으면 팅겨버리는데(컨트롤러에 코드가 안넘어감) 근데
         //하지만 뭔가를 @Valid 하고 뒤에 BindingResult가 있으면
         // valid 실패시 오류가 result에 담겨서 컨트롤러코드가 실행이됨.
@@ -40,15 +41,25 @@ public class MemberController {
             return "members/createMemberForm";//스프링이 이 화면까지 result를 끌고간다.
             //그래서 어떤 에러가 있는지 이 화면에서 뿌릴 수 있다.
         }
-
-
         Address address = new Address(form.getCity(), form.getStreet(), form.getZipcode());
 
-        Member member=new Member();
+        Member member = new Member();
         member.setAddress(address);
         member.setName(form.getName());
 
         memberService.join(member);
         return "redirect:/";//등록을하고나면 재로딩되면 안좋아서 리다이렉트로 첫번째 페이지로 넘어감.
     }
+
+    @GetMapping("/members")
+    public String list(Model model) {//전체 조회
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);//key, value
+        // model에 지금 List가 들어가 있는데 이걸 html에서 루프를 돌면서 뿌리면 된다.
+        return "members/memberList";//templates/members/memberList.html
+    }
 }
+//엔티티를 최대한 순수하게 유지해야함. 오직 핵심 비즈니스로직에만 디펜던시가 있도록 설계.
+//이래야 애플리케이션이 커져도 엔티티를 여러군데에서 유연하게 사용가능( 유지보수 용이 )
+//화면에 대한 로직은 없어야함. -> 화면에 맞는 건 Form객체나 DTO를 써야함.
+//DTO(data transfer object(getter, setter 만 있음)

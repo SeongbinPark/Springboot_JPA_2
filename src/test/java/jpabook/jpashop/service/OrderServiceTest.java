@@ -45,7 +45,6 @@ public class OrderServiceTest {
         //then
         Order getOrder = orderRepository.findOne(orderId);
 
-
         //(1: 메세지, 2:기댓값, 3: 실제값. )
         assertEquals("상품 주문시 상태는 ORDER", OrderStatus.ORDER, getOrder.getStatus());
         assertEquals("주문한 상품 종류 수가 정확해야한다.", 1, getOrder.getOrderItems().size());
@@ -96,7 +95,7 @@ public class OrderServiceTest {
         Member member = createMember();
         Item item = createBook("시골 JPA", 10000, 10);
 
-        int orderCount = 9;
+        int orderCount = 11;//이게 10보다 커야 테스트 성공( 예외 터져서 )
 
         //when
         orderService.order(member.getId(), item.getId(), orderCount);
