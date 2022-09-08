@@ -3,8 +3,11 @@ package jpabook.jpashop.domain.item;
 
 import jpabook.jpashop.domain.Category;
 import jpabook.jpashop.exception.NotEnoughStockException;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,10 +20,12 @@ import java.util.List;
 //우리는 싱글테이블 전략을 쓰니까 @Inheritance(strategy= InheritanceType.SINGLE_TABLE)
 @Inheritance(strategy= InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")//dtype으로 종류구분.
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class Item {//추상클래스로함. 구현체를 만들거기 때문에
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")//칼럼명은 항상 소문자+_
     private Long id;
 
@@ -50,4 +55,10 @@ public abstract class Item {//추상클래스로함. 구현체를 만들거기 �
         this.stockQuantity=restStock;
     }
 
+    //3. Item 필드 변경 시 변경지점
+    public void change(String name, int price, int stockQuantity) {
+        this.name=name;
+        this.price=price;
+        this.stockQuantity=stockQuantity;
+    }
 }

@@ -1,25 +1,28 @@
 package jpabook.jpashop.domain;
 
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@Setter
 @Getter
+@Setter
 @Entity
 public class Member {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")//칼럼 이름 지정.
     private Long id;
 
-
+    @NotNull
     private String name;
 
     @Embedded

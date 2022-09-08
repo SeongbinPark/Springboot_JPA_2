@@ -14,13 +14,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")//테이블
-@Setter
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)//기본생성자를 막아둬야함. ->
 public class Order {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orders_id")//db컬럼=테이블명_id
     private Long id;
 
@@ -31,18 +30,22 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @Setter
     private LocalDateTime orderDate;//자바8부터 LocalDateTime
 
+    @Setter
     @Enumerated(EnumType.STRING)//enum이면 넣어줘야됨, STRING 써야 순서상관X
     private OrderStatus status;//주문상태 enum으로 할거임.
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "delivery_id")
+    @JoinColumn(name = "delivery_id")//Order에서 FK 갖고 있다. 더 많이 access하기 때문.
     private Delivery delivery;
 
 
     /**
-     * 연관관계 편의메서드 ( 양쪽 다 값 세팅한다 생각하자 )
+     * 연관관계 편의메서드 (양방향이면 연관관계 편의메서드 있는게 좋다.(양쪽 세팅을 메서드 하나로 해결))
+     * JPA 에서는 다 쪽에서만 연관관계 설정 해주면 되지만
+     * 객체의 입장에선 양방향 모두 연관관계 설정 해주어야한다. ( 객체 그래프 탐색 )
      */
     public void setMember(Member member) {
 
@@ -96,10 +99,9 @@ public class Order {
      */
     //전체 주문 가격 조회
     public int getTotalPrice() {
-        int totalPrice= orderItems.stream()
+        //상품 각각의 가격 더하기.
+        return orderItems.stream()
                 .mapToInt(OrderItem::getTotalPrice)
                 .sum();
-        //상품 각각의 가격 더하기.
-        return totalPrice;
     }
 }

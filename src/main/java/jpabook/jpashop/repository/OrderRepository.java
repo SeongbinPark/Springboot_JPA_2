@@ -30,7 +30,7 @@ public class OrderRepository {
      * 동적쿼리를 스트링의 합으로 작성 ( 권장방법 X )
      */
     //주문 검색기능( 회원명, orderstatus로 )j
-    public List<Order> findAll(OrderSearch orderSearch) {
+    public List<Order> findAllByJpql(OrderSearch orderSearch) {
 
         String jpql = "select o from Order o join o.member m";
         boolean isFirstCondition = true;

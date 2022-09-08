@@ -51,8 +51,8 @@ public class MemberController {
         return "redirect:/";//등록을하고나면 재로딩되면 안좋아서 리다이렉트로 첫번째 페이지로 넘어감.
     }
 
-    @GetMapping("/members")
-    public String list(Model model) {//전체 조회
+    @GetMapping("/members") //전체 조회
+    public String list(Model model) {
         List<Member> members = memberService.findMembers();
         model.addAttribute("members", members);//key, value
         // model에 지금 List가 들어가 있는데 이걸 html에서 루프를 돌면서 뿌리면 된다.

@@ -104,5 +104,4 @@ public class OrderServiceTest {
         //then 만약을 위해 fail 작성
         fail("재고 수량 부족 예외가 발생해야한다.");
     }
-
 }

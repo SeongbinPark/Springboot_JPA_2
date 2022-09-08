@@ -6,6 +6,7 @@ import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.service.ItemService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +39,7 @@ public class ItemController {
         book.setIsbn(form.getIsbn());
 
         itemService.saveItem(book);
-        return "redirect:/items";
+        return "redirect:/";
     }
 
     //상품 목록
@@ -50,10 +51,9 @@ public class ItemController {
     }
 
 
-
     //상품update
     @GetMapping("items/{itemId}/edit")
-    public String updateItemForm(@PathVariable("itemId") Long itemId, Model model) {//폼 먼저 호출, 그 뒤에 POST로 수정
+    public String updateItemForm(@PathVariable Long itemId, Model model) {//폼 먼저 호출, 그 뒤에 POST로 수정
         Book item = (Book) itemService.findOne(itemId);
         //원래 Item 종류가 3개 였다. -> 각각 서비스를 만들자.Itemservice->BookService, FoodService, MovieService
 
@@ -71,7 +71,8 @@ public class ItemController {
 
     @PostMapping("items/{itemId}/edit")//실제 값 변경
     public String updateItem(@ModelAttribute BookForm form) {//Pathvariable인 itemId를 안쓸거라 안받아도됨.
-                                //updateItemForm.html에서 POST로 BookForm 객체가넘어옴.(이름 : form)
+        //updateItemForm.html에서 POST로 BookForm 객체가넘어옴.(이름 : form)
+        //https://www.inflearn.com/questions/70393 헷갈리면 보세요.
 //        Book book = new Book();
 //        book.setId(form.getId());
 //        book.setName(form.getName());
@@ -82,7 +83,11 @@ public class ItemController {
 //
 //        itemService.saveItem(book);//내가 new한 Book객체라서 persist해줘야함.
 
-        itemService.updateItem(form.getId(),form.getName(), form.getPrice(), form.getStockQuantity());
+        //귀찮더라도 itemService.saveItem() ( merge하는 방법 ) 대신
+        //
+        //변경 감지(dirty checking) 쓰는 방법을 하자. ( 일일히 setter )
+        //내가 업데이트하고 싶은 필드만 set 하자
+        itemService.updateItem(form.getId(), form.getName(), form.getPrice(), form.getStockQuantity());
         return "redirect:/items";//상품목록으로 
     }
 }

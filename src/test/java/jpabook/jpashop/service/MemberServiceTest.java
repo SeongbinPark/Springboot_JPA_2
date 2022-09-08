@@ -31,7 +31,7 @@ public class MemberServiceTest {
     EntityManager em;
 
     @Test
-    //@Rollback(value = false)
+    //@Rollback(value = false)//이렇게 하면 DB에서 실제 확인가능.
     public void 회원가입() throws Exception {
         //given
         Member member=new Member();
@@ -40,10 +40,7 @@ public class MemberServiceTest {
         //when
         Long savedId = memberService.join(member);
         //then
-        em.flush();
         assertEquals(member, memberRepository.find(savedId));
-
-
     }
 
     @Test(expected = IllegalStateException.class)

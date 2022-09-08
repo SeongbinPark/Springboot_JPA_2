@@ -10,6 +10,8 @@ import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.repository.MemberRepository;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +50,6 @@ public class OrderService {
         // 그런데 생성(필드추가, 로직추가)은 createOrderItem()을 통해서만 가능하게 해야한다. -> private생성자(protect까지됨.)
 
 
-
         //주문 생성(가장 중요)
         Order order = Order.createOrder(member, delivery, orderItem);
 
@@ -58,7 +59,7 @@ public class OrderService {
 
         /**
          * 여기서 왜 order만 save(em.persist) 했냐.. 원래는 delivery, orderItem도 jpa에 넣어줘야(persist) 하는데
-         .* Cascade 옵션 때문에 : Order를 persist 하면 orderItem에도 강제로 persist 날려준다
+         * Cascade 옵션 때문에 : Order를 persist 하면 orderItem에도 강제로 persist 날려준다
          * Delivery도 cascade옵션이라 따로 persist 안해줘도 된다.
          *
          * cascade 범위에 대한 고민 : order -> orderitem, order-> delivery 정도에서는 사용좋음.

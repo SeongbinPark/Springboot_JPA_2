@@ -1,11 +1,9 @@
 package jpabook.jpashop.domain;
 
 import jpabook.jpashop.domain.item.Item;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.aspectj.weaver.ast.Or;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 
@@ -33,16 +31,25 @@ public class OrderItem {
 
     private int count;//주문 수량
 
+    @Builder
+    public OrderItem(Item item, int orderPrice, int count) {
+        Assert.notNull(item, "item must not be null");
+        Assert.notNull(count,"count mush not be null");
 
+        this.item = item;
+        this.orderPrice = orderPrice;
+        this.count = count;
+    }
 
     /**
      * 생성 메서드
      */
     public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setItem(item);
-        orderItem.setOrderPrice(orderPrice);
-        orderItem.setCount(count);
+        OrderItem orderItem = OrderItem.builder()
+                .item(item)
+                .orderPrice(orderPrice)
+                .count(count)
+                .build();
 
         item.removeStock(count);//재고를 줄여줘야함.(넘어온 count 만큼)
         return orderItem;

@@ -15,7 +15,7 @@ import java.util.List;
 public class ItemRepository {
     private final EntityManager em;
 
-    public void save(Item item) {//아이템은 JPA에 저장하기 전까지 Id 값이 없다.
+    public void save(Item item) {//아이템은 JPA에 저장하기 전까지 Id  값이없다.
         if (item.getId() == null) {//아이디가 없다= 완전 새로 생성한 객체이다.
             em.persist(item);//신규등록
         } else {//아이디 값이 있다. = 이미 DB에 등록된 걸 어디서 가져온 것.

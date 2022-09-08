@@ -29,7 +29,7 @@ public class MemberService {
         memberRepository.save(member);
         return member.getId();
         //persist하여 영속성컨텍스트에 갔을 때도 PK를 key로 사용하여 올림. ( 아직 DB는 가지도 않음 )
-        // 그래서 getId해도 값이 있다는 것이 보장됨.
+        // 영속성 컨텍스트에서 PK로 관리 되므로 무조건 생성 됨. -> getId해도 값이 있다는 것이 보장됨.
     }
 
     /**
@@ -52,7 +52,7 @@ public class MemberService {
 
     /**
      * 멤버 하나 조회(Id로)
-     *///@Transactional(readOnly = true) 궅이 안해도 클래스에 적어놓으면 자동 적용.
+     *///@Transactional(readOnly = true) 굳이 안해도 클래스에 적어놓으면 자동 적용.
     //@Transactional(readOnly = true)//읽기(조회)에는 가급적 readOnly=true를 넣자.
     public Member findById(Long id) {
         return memberRepository.find(id);
