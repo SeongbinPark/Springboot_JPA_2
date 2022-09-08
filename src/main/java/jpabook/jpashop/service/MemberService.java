@@ -58,4 +58,14 @@ public class MemberService {
         return memberRepository.find(id);
     }
 
+
+    /**
+     * 회원 정보 수정
+     */
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.find(id);
+        member.setName(name); //트랜젝션 안이라 member는 영속상태 -> 변경감지 -> flush 때 스냅샷과 비교 -> UPDATE 쿼리 생성
+    } // 메서드 종료되면 스프링 AOP가 동작하면서 트랜젝션 커밋이 됨. -> JPA가 flush -> DB 반영.
+
 }
