@@ -1,18 +1,15 @@
 package jpabook.jpashop.api;
 
 
-import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
-import lombok.Data;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.yaml.snakeyaml.scanner.ScannerImpl;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +24,9 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
+    //엔티티를 그대로 API에 노출
     @GetMapping("/api/v1/simple-orders")
     public List<Order> orderV1() {
         List<Order> all = orderRepository.findAllByCriteria(new OrderSearch());
@@ -38,41 +37,35 @@ public class OrderSimpleApiController {
         return all;
     }
 
+    //엔티티를 DTO로 변환
     @GetMapping("/api/v2/simple-orders")
-    public List<SimpleOrderDto> ordersV2() {
+    public List<OrderSimpleQueryDto> ordersV2() {
         //주문 2개 // N = 2
         //N + 1문제 -> 1 + N(회원) + N(배송) -> 5개 쿼리가 나간다.
         List<Order> orders = orderRepository.findAllByJpql(new OrderSearch());
 
         //이 루프가 2번 돈다. -> Member, Delivery의 LAZY초기화 두 번씩 일어나게된다.
         return orders.stream()
-                .map(SimpleOrderDto::new)
+                .map(o ->new OrderSimpleQueryDto(o.getId(),o.getMember().getName(),o.getOrderDate(),o.getStatus(),o.getMember().getAddress()) )
                 .collect(Collectors.toList());
     }
 
+    //N+1 문제 해결을 위한 페치조인
     @GetMapping("/api/v3/simple-orders")
-    public List<SimpleOrderDto> ordersV3() {
+    public List<OrderSimpleQueryDto> ordersV3() {
         List<Order> orders = orderRepository.findAllwithMemberDelivery();
         return orders.stream()
-                .map(SimpleOrderDto::new)
+                .map(o ->new OrderSimpleQueryDto(o.getId(),o.getMember().getName(),o.getOrderDate(),o.getStatus(),o.getMember().getAddress()) )
                 .collect(Collectors.toList());
     }
 
-    @Data
-    static class SimpleOrderDto {
-        private Long orderId;
-        private String name;
-        private LocalDateTime orderDate;
-        private OrderStatus orderStatus;
-        private Address address; //고객정보아니고 배송지 정보
-
-        //DTO가 파라미터로 엔티티를 받는건 문제 안됨. 중요하지않은 곳에서 중요한 엔티티의존하기 때문
-        public SimpleOrderDto(Order order) {
-            this.orderId = order.getId();
-            this.name = order.getMember().getName(); // 여기서 LAZY 초기화 (LAZY객체 DB에서 땡겨옴(영속성컨텍스트에 있으면 그거 가져옴.))
-            this.orderDate = order.getOrderDate();
-            this.orderStatus = order.getStatus();
-            this.address = order.getDelivery().getAddress(); // 여기서 LAZY 초기화 (LAZY객체 DB에서 땡겨옴(영속성컨텍스트에 있으면 그거 가져옴.))
-        }
+    // JPA에서 DTO로 바로 조회
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> ordersV4() {
+        return orderSimpleQueryRepository.findOrderDtos(); // orderSimpleQueryRepository로 뺀 이유 : JPA에서 DTO 바로 뽑는 로직이 API에 의존적이어서 OrderRepository는 순수한 엔티티용도로 유지하고자 따로 빼놈
+        //JPA에서 DTO로 바로 조회 했다.
     }
+
+
+
 }
