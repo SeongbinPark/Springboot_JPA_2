@@ -37,7 +37,7 @@ public class OrderSimpleApiController {
         return all;
     }
 
-    //엔티티를 DTO로 변환
+    //엔티티를 DTO로 변환 (N+1문제 발생)
     @GetMapping("/api/v2/simple-orders")
     public List<OrderSimpleQueryDto> ordersV2() {
         //주문 2개 // N = 2
