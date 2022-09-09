@@ -96,5 +96,17 @@ public class OrderRepository {
         }
         cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));     TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000); //최대 1000건
         return query.getResultList(); }
+
+    /**
+     * 3-3. 간단주문조회. 페치조인
+     * @return
+     */
+    public List<Order> findAllwithMemberDelivery() {
+        return em.createQuery("select o from Order o"+
+                " join fetch o.member m"+
+                " join fetch o.delivery d", Order.class)
+                .getResultList();
+
     }
+}
 //-> 해결법 : 쿼리 DSL(동적쿼리에 강력한 기능, 정적쿼리도 길어지면 DSL)

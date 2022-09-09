@@ -45,11 +45,17 @@ public class OrderSimpleApiController {
         List<Order> orders = orderRepository.findAllByJpql(new OrderSearch());
 
         //이 루프가 2번 돈다. -> Member, Delivery의 LAZY초기화 두 번씩 일어나게된다.
-        List<SimpleOrderDto> result = orders.stream()
+        return orders.stream()
                 .map(SimpleOrderDto::new)
                 .collect(Collectors.toList());
+    }
 
-        return result;
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllwithMemberDelivery();
+        return orders.stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
     }
 
     @Data
@@ -62,12 +68,11 @@ public class OrderSimpleApiController {
 
         //DTO가 파라미터로 엔티티를 받는건 문제 안됨. 중요하지않은 곳에서 중요한 엔티티의존하기 때문
         public SimpleOrderDto(Order order) {
-            this.orderId=order.getId();
-            this.name=order.getMember().getName(); // 여기서 LAZY 초기화 (LAZY객체 DB에서 땡겨옴(영속성컨텍스트에 있으면 그거 가져옴.))
-            this.orderDate=order.getOrderDate();
-            this.orderStatus=order.getStatus();
-            this.address=order.getDelivery().getAddress(); // 여기서 LAZY 초기화 (LAZY객체 DB에서 땡겨옴(영속성컨텍스트에 있으면 그거 가져옴.))
+            this.orderId = order.getId();
+            this.name = order.getMember().getName(); // 여기서 LAZY 초기화 (LAZY객체 DB에서 땡겨옴(영속성컨텍스트에 있으면 그거 가져옴.))
+            this.orderDate = order.getOrderDate();
+            this.orderStatus = order.getStatus();
+            this.address = order.getDelivery().getAddress(); // 여기서 LAZY 초기화 (LAZY객체 DB에서 땡겨옴(영속성컨텍스트에 있으면 그거 가져옴.))
         }
     }
-
 }
