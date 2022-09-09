@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jpabook.jpashop.domain.item.Item;
 import lombok.*;
 import org.aspectj.weaver.ast.Or;
@@ -25,6 +26,7 @@ public class OrderItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")//다 쪽인 OrderItem을 연관관계주인으로.
+    @JsonIgnore
     private Order order;
 
     private int orderPrice;//주문 가격
