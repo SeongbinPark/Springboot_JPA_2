@@ -37,6 +37,8 @@ public class MemberApiController {
         return new Result(collect.size(),collect);
     }
 
+
+    //wrapper/Result 도 만들어둠.
     @Data
     @AllArgsConstructor
     //컬렉션을 바로 반환하면 JSON 배열타입(전체가 [ ]로 감싸진 구조)으로 나가기 때문에 Result로 한 번 감싸서 반환. (배열로 나가면 유연성 별로)

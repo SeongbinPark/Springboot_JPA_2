@@ -7,6 +7,9 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.wrapper.Result;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,20 +41,14 @@ public class OrderApiController {
     }
 
     @GetMapping("api/v2/orders")
-    public List<OrderDto> ordersV2() {
+    public Result ordersV2() {
         List<Order> orders = orderRepository.findAllByJpql(new OrderSearch());
         List<OrderDto> orderDtos = orders.stream()
                 .map(o -> new OrderDto(o))
                 .collect(Collectors.toList()); //객체의 getter로 List로 만든다.
 
-        return orderDtos;
+        return new Result(orderDtos);
     }
-
-
-
-
-
-
 
     @Getter
     static class OrderDto {
