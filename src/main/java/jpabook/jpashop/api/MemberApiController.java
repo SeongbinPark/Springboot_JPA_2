@@ -2,12 +2,14 @@ package jpabook.jpashop.api;
 
 
 import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.dto.request.CreateMemberRequest;
+import jpabook.jpashop.dto.request.UpdateMemberRequest;
+import jpabook.jpashop.dto.response.CreateMemberResponse;
+import jpabook.jpashop.dto.response.UpdateMemberResponse;
 import jpabook.jpashop.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -93,35 +95,15 @@ public class MemberApiController {
     }
 
 
-    @Data
-    static class UpdateMemberRequest {
-        private String name;
-    }
 
 
-    @Data
-    @AllArgsConstructor
-    static class UpdateMemberResponse {
-        private Long id;
-        private String name;
-
-    }
 
 
-    @Data
-    static class CreateMemberRequest {
-        @NotEmpty
-        private String name;
-    }
 
-    @Data
-    static class CreateMemberResponse {
-        private Long id;
 
-        public CreateMemberResponse(Long id) {
-            this.id = id;
-        }
-    }
+
+
+
 
 
 }
