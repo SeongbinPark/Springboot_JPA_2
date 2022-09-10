@@ -12,6 +12,7 @@ spring:
       hibernate:
         show_sql: true # sout에 로그 찍음
         format_sql: true
+        default_batch_fetch_size: 100 # 웬만하면 키면 좋은 옵션
 
 logging.level:
     org.hibernate.SQL: debug # 로거에 로그 찍음

@@ -10,7 +10,9 @@ import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.wrapper.Result;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.*;
 
+/**
+ * XToMany(Collections) 까지 모두 조회
+ */
 @RestController
 @RequiredArgsConstructor
 public class OrderApiController {
@@ -52,6 +57,7 @@ public class OrderApiController {
     }
 
     //fetch join 하면서 Entity를 DTO로 변환
+    //member, delivery, orderitem, item 모두 페치조인 한 경우.
     @GetMapping("api/v3/orders")
     public Result ordersV3() {
         List<Order> orders = orderRepository.findAllWithItem(); //Order를 Item과 같이 찾자.
@@ -61,6 +67,19 @@ public class OrderApiController {
         return new Result(orderDtos);
     }
 
+    //컬렉션 페치조인 시 페이징 안되는 단점 보완
+    //XToOne 만 페치조인(member, delivery) , 페이징
+    @GetMapping("api/v3.1/orders")
+    public Result ordersV3_page(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        List<Order> orders = orderRepository.findAllWithMemberDeliveryPage(offset, limit);
+        //order, member, delivery 페치조인(지금 orderitem은 없는상태)
+        List<OrderDto> orderDtos = orders.stream()
+                .map(OrderDto::new)
+                .collect(toList());
+        return new Result(orderDtos);
+    }
 
 
 
@@ -93,9 +112,9 @@ public class OrderApiController {
         private int count;// 주문 수량
 
         public OrderItemDto(OrderItem orderItem) {
-            itemName=orderItem.getItem().getName(); //depth 가 orderitem->item->name
-            orderPrice=orderItem.getOrderPrice();
-            count=orderItem.getCount();
+            itemName = orderItem.getItem().getName(); //depth 가 orderitem->item->name
+            orderPrice = orderItem.getOrderPrice();
+            count = orderItem.getCount();
         }
     }
 }
