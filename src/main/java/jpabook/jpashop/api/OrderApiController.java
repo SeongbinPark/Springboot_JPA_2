@@ -8,8 +8,6 @@ import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.wrapper.Result;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +24,9 @@ public class OrderApiController {
 
     private final OrderRepository orderRepository;
 
+    //엔티티 그대로 노출
     @GetMapping("api/v1/orders")
-    public List<Order> ordersV1() {
+    public Result ordersV1() {
         List<Order> all = orderRepository.findAllByJpql(new OrderSearch());
         for (Order order : all) { //루프돌면서 강제 초기화 (지연로딩 객체들 강제 로딩)
             order.getMember().getName(); //Member 강제 초기화
@@ -37,20 +37,34 @@ public class OrderApiController {
             orderItems.stream().forEach(o -> o.getItem().getName());
             //Order와 관련된 OrderItems 를 다 가져와서 forEach돌리면서 .getName()을 통해 강제 초기화
         }
-        return all;
+        return new Result(all);
     }
 
+    //Entity를 DTO로 변환
     @GetMapping("api/v2/orders")
     public Result ordersV2() {
         List<Order> orders = orderRepository.findAllByJpql(new OrderSearch());
         List<OrderDto> orderDtos = orders.stream()
-                .map(o -> new OrderDto(o))
-                .collect(Collectors.toList()); //객체의 getter로 List로 만든다.
+                .map(OrderDto::new)
+                .collect(toList());
 
         return new Result(orderDtos);
     }
 
-    @Getter
+    //fetch join 하면서 Entity를 DTO로 변환
+    @GetMapping("api/v3/orders")
+    public Result ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItem(); //Order를 Item과 같이 찾자.
+        List<OrderDto> orderDtos = orders.stream()
+                .map(OrderDto::new)
+                .collect(toList());
+        return new Result(orderDtos);
+    }
+
+
+
+
+    @Getter //DTO의 getter는 JACKSON에 의해 객체->JSON (직렬화) 될 때 쓰인다.
     static class OrderDto {
 
         private Long orderId;
@@ -67,12 +81,12 @@ public class OrderApiController {
             orderStatus = order.getStatus();
             address = order.getDelivery().getAddress();
             orderItems = order.getOrderItems().stream()
-                    .map(o -> new OrderItemDto(o))
-                    .collect(Collectors.toList());
+                    .map(OrderItemDto::new)
+                    .collect(toList());
         }
     }
 
-    @Getter
+    @Getter //DTO의 getter는 JACKSON에 의해 객체->JSON (직렬화) 될 때 쓰인다.
     static class OrderItemDto {
         private String itemName; //상품명
         private int orderPrice; //주문 가격
@@ -84,6 +98,4 @@ public class OrderApiController {
             count=orderItem.getCount();
         }
     }
-
-
 }

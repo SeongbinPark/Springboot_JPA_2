@@ -46,16 +46,16 @@ public class OrderSimpleApiController {
 
         //이 루프가 2번 돈다. -> Member, Delivery의 LAZY초기화 두 번씩 일어나게된다.
         return orders.stream()
-                .map(o ->new OrderSimpleQueryDto(o.getId(),o.getMember().getName(),o.getOrderDate(),o.getStatus(),o.getMember().getAddress()) )
+                .map(o ->new OrderSimpleQueryDto(o.getId(),o.getMember().getName(),o.getOrderDate(),o.getStatus(),o.getDelivery().getAddress()) )
                 .collect(Collectors.toList());
     }
 
     //N+1 문제 해결을 위한 페치조인
     @GetMapping("/api/v3/simple-orders")
     public List<OrderSimpleQueryDto> ordersV3() {
-        List<Order> orders = orderRepository.findAllwithMemberDelivery();
+        List<Order> orders = orderRepository.findAllwithMemberDelivery();//Order를 Member,Delivery 와 같이 찾자
         return orders.stream()
-                .map(o ->new OrderSimpleQueryDto(o.getId(),o.getMember().getName(),o.getOrderDate(),o.getStatus(),o.getMember().getAddress()) )
+                .map(o ->new OrderSimpleQueryDto(o.getId(),o.getMember().getName(),o.getOrderDate(),o.getStatus(),o.getDelivery().getAddress()) )
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +65,4 @@ public class OrderSimpleApiController {
         return orderSimpleQueryRepository.findOrderDtos(); // orderSimpleQueryRepository로 뺀 이유 : JPA에서 DTO 바로 뽑는 로직이 API에 의존적이어서 OrderRepository는 순수한 엔티티용도로 유지하고자 따로 빼놈
         //JPA에서 DTO로 바로 조회 했다.
     }
-
-
-
 }

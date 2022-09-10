@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,16 +30,16 @@ public class MemberApiController {
     }
 
     @GetMapping("api/v2/members")
-    public Result memberV2() {
+    public Result<List<MemberDto>> memberV2() {
         List<MemberDto> collect = memberService.findMembers().stream()
                 .map(m -> new MemberDto(m.getName()))
                 .collect(Collectors.toList());
-        return new Result(collect.size(),collect);
+        return new Result<>(collect.size(), collect);
     }
 
 
     //wrapper/Result 도 만들어둠.
-    @Data
+    @Data //DTO의 getter는 JACKSON에 의해 객체->JSON (직렬화) 될 때 쓰인다.
     @AllArgsConstructor
     //컬렉션을 바로 반환하면 JSON 배열타입(전체가 [ ]로 감싸진 구조)으로 나가기 때문에 Result로 한 번 감싸서 반환. (배열로 나가면 유연성 별로)
     // -> 추후 요구사항 분명히 들어온다. -> JSON 구조 안깨지면서 추가하려면 한번 감싸줘야함.
@@ -48,18 +48,17 @@ public class MemberApiController {
         private T data; //이때 data는 List<MemberDto>
     }
 
-    @Data
+    @Data //DTO의 getter는 JACKSON에 의해 객체->JSON (직렬화) 될 때 쓰인다.
     @AllArgsConstructor
     static class MemberDto {
         private String name; // 요구사항이 이름만 넘기는 걸로 하자.
     }
 
 
-
     /**
-     * 회원 가입, 수정 API
+     * 회원 가입
      */
-    @PostMapping("/api/v1/members") // 회원 등록 API // @RequestBody는 JSON으로 온 req를 Member에 파싱해서 넣어줌.
+    @PostMapping("/api/v1/members") // 회원 등록 API // @RequestBody는 JSON으로 온 요청을 Member에 파싱해서 넣어줌.
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) { //물론 나중에 DTO로 바꿈
 
         Long id = memberService.join(member); // @Valid 어겼을 때 예외 처리 -> ControllerAdvice 사용.
@@ -79,6 +78,9 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    /**
+     * 회원 수정
+     */
     @PatchMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(
             @PathVariable Long id,
@@ -89,8 +91,6 @@ public class MemberApiController {
 
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
-
-
 
 
     @Data

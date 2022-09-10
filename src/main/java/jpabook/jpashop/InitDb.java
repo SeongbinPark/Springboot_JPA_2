@@ -13,7 +13,7 @@ import javax.persistence.EntityManager;
 // 무식한 방법으로 만들겠다.
 
 /**
- * 총 주문 2개
+ * 총 주문 2개 , 주문상품 4개
  * userA
  * -JPA1 BOOK
  * -JPA2 BOOK
@@ -46,7 +46,7 @@ public class InitDb {
         private final EntityManager em; // 샘플데이터니까 그냥 em으로 바로 넣어주자.
 
         public void dbInit1() {
-            Member member = createMember("userA","서울","1","1111");
+            Member member = createMember("userA", "서울", "1", "1111");
             em.persist(member);
 
             Book book1 = createBook("JPA1 BOOK", 10000, 100);
@@ -64,7 +64,7 @@ public class InitDb {
         }
 
         public void dbInit2() {
-            Member member = createMember("userB", "진주", "2","2222");
+            Member member = createMember("userB", "진주", "2", "2222");
             em.persist(member);
 
             Book book1 = createBook("SPRING1 BOOK", 20000, 200);

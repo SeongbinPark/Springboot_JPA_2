@@ -102,17 +102,25 @@ public class OrderRepository {
 
     /**
      * 3-3. 간단주문조회. 페치조인
-     *
-     * @return
      */
     public List<Order> findAllwithMemberDelivery() {
         return em.createQuery("select o from Order o" +
                         " join fetch o.member m" +
                         " join fetch o.delivery d", Order.class)
                 .getResultList();
-
     }
 
 
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                        "select distinct o from Order o" +
+                                " join fetch o.member m" +
+                                " join fetch o.delivery d" + //여기까지는 데이터 뻥튀기 안되기 때문에 걱정없음.(하지만 밑은 컬렉션)
+                                " join fetch o.orderItems oi" +
+                                " join fetch oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(100)
+                .getResultList();
+    }
 }
 //-> 해결법 : 쿼리 DSL(동적쿼리에 강력한 기능, 정적쿼리도 길어지면 DSL)
