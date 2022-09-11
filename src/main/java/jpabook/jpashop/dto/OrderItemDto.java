@@ -10,7 +10,8 @@ public class OrderItemDto {
     private int count;// 주문 수량
 
     public OrderItemDto(OrderItem orderItem) {
-        itemName = orderItem.getItem().getName(); //depth 가 orderitem->item->name
+        itemName = orderItem.getItem()
+                .getName(); //depth 가 orderitem->item->name
         orderPrice = orderItem.getOrderPrice();
         count = orderItem.getCount();
     }

@@ -22,8 +22,8 @@ public class OrderSimpleQueryRepository {
                 //이 부분 jpql 이 화면에 종속적인 코드.
                         "select new jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto(o.id,m.name,o.orderDate,o.status,d.address)" +
                                 "from Order o" +
-                                " join o.member m" +
-                                " join o.delivery d", OrderSimpleQueryDto.class)
+                                " join o.member m" + //그냥 join
+                                " join o.delivery d", OrderSimpleQueryDto.class) //그냥 join
                 .getResultList();
     }
 
