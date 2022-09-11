@@ -36,7 +36,7 @@ public class OrderQueryRepository {
             List<OrderItemQueryDto> orderItems = findOrderItems(o.getOrderId()); //query N번
             o.setOrderItems(orderItems);
         }); //이때 result값은 안바뀜.
-        //Consumer 이므로 반환값없이 result의 실제값이 바뀐다.
+        //forEach의 파라미터가 Consumer 이므로 반환값없이 result의 실제값이 바뀐다.
         return result;
     }
 
