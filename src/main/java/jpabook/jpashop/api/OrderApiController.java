@@ -8,6 +8,8 @@ import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.dto.OrderDto;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import jpabook.jpashop.wrapper.Result;
@@ -110,13 +112,29 @@ public class OrderApiController {
 
     //JPA에서 DTO바로 조회 (N + 1문제 터짐)
     @GetMapping("/api/v4/orders")
-    public List<OrderQueryDto> orderV4() {
-        return orderQueryRepository.findOrderQueryDtos();
+    public Result orderV4() {
+        List<OrderQueryDto> orderQueryDtos = orderQueryRepository.findOrderQueryDtos();
+        return new Result(orderQueryDtos);
     }
 
     //JPA에서 DTO 바로 조회 (컬렉션 조회 최적화 - Map 사용)
     @GetMapping("/api/v5/orders")
-    public List<OrderQueryDto> orderV5() {
-        return orderQueryRepository.findAllByDtoOptimizatmion();
+    public Result orderV5() {
+        List<OrderQueryDto> allByDtoOptimizatmion = orderQueryRepository.findAllByDtoOptimizatmion();
+        return new Result(allByDtoOptimizatmion);
+    }
+
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> orderV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDtoFlat();
+        return flats.stream()
+                .collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(),
+                                o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+                        mapping(o -> new OrderItemQueryDto(o.getOrderId(),
+                                o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+                )).entrySet().stream()
+                .map(e -> new OrderQueryDto(e.getKey().getOrderId(),
+                        e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(),e.getKey().getAddress(), e.getValue()))
+                .collect(toList());
     }
 }

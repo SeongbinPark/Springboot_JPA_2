@@ -27,6 +27,7 @@ public class OrderQueryRepository {
      * for (T t : this)
      * action.accept(t);
      */
+    //V4
     public List<OrderQueryDto> findOrderQueryDtos() {
         List<OrderQueryDto> result = findOrders(); //query 1번 -> N개
 
@@ -47,7 +48,7 @@ public class OrderQueryRepository {
         //orderId만 추출 (두 개)
         List<Long> orderIds = toOrderIds(result);
 
-       //바로 Map으로 뽑는 것 까지 메서드에 포함시킴(메모리에 올림.)
+        //바로 Map으로 뽑는 것 까지 메서드에 포함시킴(메모리에 올림.)
         Map<Long, List<OrderItemQueryDto>> orderItemMap = findOrderItemMap(orderIds);
 
         //result의 orderItems 설정 (이게 V5의 핵심)
@@ -101,4 +102,14 @@ public class OrderQueryRepository {
     }
 
 
+    public List<OrderFlatDto> findAllByDtoFlat() {
+        return em.createQuery(
+                        "select new jpabook.jpashop.repository.order.query.OrderFlatDto(o.id,m.name,o.orderDate,o.status,d.address,i.name,oi.orderPrice,oi.count)" +
+                                " from Order o" +
+                                " join o.member m" +
+                                " join o.delivery d" +
+                                " join o.orderItems oi" + //여기서 oi개수만큼 데이터 뻥튀기
+                                " join oi.item i", OrderFlatDto.class)
+                .getResultList();
+    }
 }
